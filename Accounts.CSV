@@ -1,0 +1,10 @@
+username,age,id,email,phoneNumber,password,role
+ziad,18,123,ziad@gmail.com,01055667788,Ziad123,R
+Kareem,20,124,kareem@gmail.com,01111122222,Kareem124,P
+Marwan,19,125,Marwan@gmail.com,01111133333,Marwan125,A
+Tarek,20,126,Tarek@gmail.com,01111144444,Tarek126,A
+Peter,20,127,Peter@gmail.com,01111155555,Peter127,L
+ahmed,20,128,ahmed@gmail.com,01012345678,pass123,R
+Ali,20,129,Ali@gmail.com,01111166666,Ali129,L
+Youssef,20,130,Youssef@gmail.com,01111177777,Youssef130,P
+

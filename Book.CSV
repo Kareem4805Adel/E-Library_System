@@ -1,0 +1,4 @@
+BookId,genre,PublishingDate,PublisherId,description,Title,Author
+101,Fiction,2020-05-14,124,"A mystery novel set in Victorian London",The Silent Streets,Kareem
+102,Science,2018-11-02,124,"Explains physics concepts in simple language",Understanding Physics,Kareem
+103,History,2016-03-21,130,"A deep dive into ancient civilizations",Ancient Empires,Youssef

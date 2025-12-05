@@ -3,17 +3,18 @@ public abstract class User {
     private int age;
     private int id;
     private String email;
-    private long phoneNumber;
+    private String phoneNumber;
     private String password;
+    private String role;
 
-
-    public User(String username, int age, int id, String email, long phoneNumber, String password) {
+    public User(String username, int age, int id, String email, String phoneNumber, String password, String role) {
         this.username = username;
         this.age = age;
         this.id = id;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.password = password;
+        this.role= role;
     }
 
     public User(){}
@@ -23,7 +24,9 @@ public abstract class User {
     }
 
     public void setUsername(String username) {
+
         this.username = username;
+
     }
 
     public int getAge() {
@@ -50,29 +53,46 @@ public abstract class User {
         this.email = email;
     }
 
-    public long getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(long phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
 
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
+    public boolean setPassword(String password) {
+        boolean found = false;
+        if(password.length()<8){
+            return found;
+        }
+        found=true;
         this.password = password;
+        return found;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public User getUser(){
         return this;
     }
 
-    public void logout(){}
+    public void logout(){
 
-    public void login(){}
+    }
+
+    public static void login(String Username,String password){
+
+    }
 
     public abstract void manageProfile();
+
+
 }
