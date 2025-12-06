@@ -3,23 +3,29 @@ import java.util.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
-//hi
 public class Ebook {
     private int BookId;
     private String genre;
-    private Date PublishingDate;
+    private LocalDate PublishingDate;
     private int PublisherId;
     private String description;
     private String Title;
     private String Author;
-
+    private boolean status;
+    private List<Integer> reviews;
 
     public Ebook(){}
 
-    public Ebook(int bookId, String genre, Date publishingDate, int publisherId, String description, String title, String author) {
+    //--------------------ONLY FOR ACTUAL CREATION--------------------------------
+    //IN CASE OF THE NEED OF A TEMPORARY EBOOK USE THE NO-ARGS THEN THE SETTERS
+    //TO PREVENT CREATION OF MULTIPLE UNNECESSARY LOGS
+    public Ebook(int bookId, String genre, LocalDate publishingDate, int publisherId, String description, String title, String author) {
         BookId = bookId;
         this.genre = genre;
         PublishingDate = publishingDate;
@@ -27,7 +33,25 @@ public class Ebook {
         this.description = description;
         Title = title;
         Author = author;
+        status = false;
+
+        LocalDate today = LocalDate.now();
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String sb = "[" + (today.format(dateFormatter)) + ("] Action: Book Created\n");
+
+        File dir = new File("BooksLogs");
+        String filename = "Book" + bookId;
+        File file = new File(dir, filename);
+
+        try (FileWriter writer = new FileWriter(file)) {
+            writer.write(sb);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
+    //-------------------------END OF DANGER--------------------------------------
+
 
     public int getBookId() {
         return BookId;
@@ -45,11 +69,11 @@ public class Ebook {
         this.genre = genre;
     }
 
-    public Date getPublishingDate() {
+    public LocalDate getPublishingDate() {
         return PublishingDate;
     }
 
-    public void setPublishingDate(Date publishingDate) {
+    public void setPublishingDate(LocalDate publishingDate) {
         PublishingDate = publishingDate;
     }
 
@@ -86,8 +110,11 @@ public class Ebook {
     }
 
     public void removeBook(int bookId) {
+
         List<Ebook> books = new ArrayList<>();
+
         try (BufferedReader br = new BufferedReader(new FileReader("Book.CSV"))) {
+
             String line;
             br.readLine(); // skip header
             while ((line = br.readLine()) != null) {
@@ -95,23 +122,42 @@ public class Ebook {
 
                 Ebook u = new Ebook();
                 u.setBookId(Integer.parseInt(data[0]));
-                System.out.println(data[0]);
                 u.setGenre(data[1]);
                 u.setPublisherId(Integer.parseInt(data[2]));
                 u.setDescription(data[3]);
                 u.setTitle(data[4]);
                 u.setAuthor(data[5]);
+                books.add(u);
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         for (int i = 0; i < books.size(); i++) {
             if (books.get(i).getBookId() == this.BookId) {
+
                 books.remove(i);
+
+                String filename = "Book" + this.BookId;
+                try (FileWriter writer = new FileWriter(filename)) {
+                    LocalDate today = LocalDate.now();
+                    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+                    String sb = "["
+                            +(today.format(dateFormatter))
+                            +("] Action: BOOK DELETED\n");
+
+                    writer.write(sb);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
                 break;
             }
 
         }
+
         try (FileWriter writer = new FileWriter("Accounts.CSV")) {
 
             writer.write("BookId,genre,PublishingDate,PublisherId,description,Title,Author\n");
@@ -131,10 +177,15 @@ public class Ebook {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
+
     public void updateBook(int bookId,String genre,String description){
+
         List<Ebook> books = new ArrayList<>();
+
         try (BufferedReader br = new BufferedReader(new FileReader("Book.CSV"))) {
+
             String line;
             br.readLine(); // skip header
             while ((line = br.readLine()) != null) {
@@ -142,25 +193,28 @@ public class Ebook {
 
                 Ebook u = new Ebook();
                 u.setBookId(Integer.parseInt(data[0]));
-                System.out.println(data[0]);
                 u.setGenre(data[1]);
                 u.setPublisherId(Integer.parseInt(data[2]));
                 u.setDescription(data[3]);
                 u.setTitle(data[4]);
                 u.setAuthor(data[5]);
+                books.add(u);
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         for (int i = 0; i < books.size(); i++) {
             if (books.get(i).getBookId() == this.BookId) {
                 books.get(i).setGenre(genre);
                 books.get(i).setDescription(description);
-
+                books.get(i).LogVersionHistory(genre, description);
                 break;
             }
 
         }
+
         try (FileWriter writer = new FileWriter("Accounts.CSV")) {
 
             writer.write("BookId,genre,PublishingDate,PublisherId,description,Title,Author\n");
@@ -180,11 +234,67 @@ public class Ebook {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public Ebook getBook(int bookId){
+
+        try (BufferedReader br = new BufferedReader(new FileReader("Book.CSV"))) {
+
+        String line;
+        br.readLine();
+        // skip header
+        while ((line = br.readLine()) != null) {
+
+            String[] data = line.split(",");
+
+            if(bookId==(Integer.parseInt(data[0]))){
+
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDate date = LocalDate.parse(data[2], formatter);
+
+                Ebook u = new Ebook();
+
+                u.setBookId(Integer.parseInt(data[0]));
+                u.setGenre(data[1]);
+                u.setPublisherId(Integer.parseInt(data[2]));
+                u.setDescription(data[3]);
+                u.setTitle(data[4]);
+                u.setAuthor(data[5]);
+                return u;
+            }
+
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return null;
+}
+
+    public void LogVersionHistory(String Newgenre,String Newdescription){
+
+        LocalDate today = LocalDate.now();
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        String sb = "["
+                +(today.format(dateFormatter))
+                +("] Action: Update")
+                +(" | New Genre: ")
+                +(Newgenre)
+                +(" | New Description: ")
+                +(Newdescription + "\n");
+
+        String filename = "Book" + this.BookId;
+        try (FileWriter writer = new FileWriter(filename)) {
+            writer.write(sb);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 
     }
-    public Ebook getBook(int bookId){return this;}
-    public void LogVersionHistory(int bookId){}
-    public void CreateBook(){}
+
     public void BorrowBook(int bookId){}
     public void purchaseBook(int bookId){}
 }
