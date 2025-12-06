@@ -65,13 +65,11 @@ public class User {
     }
 
     public boolean setPassword(String password) {
-        boolean found = false;
-        if(password.length()<8){
-            return found;
+        if(password.length()<4){
+            return false;
         }
-        found=true;
         this.password = password;
-        return found;
+        return true;
     }
 
     public void setPhoneNumber(String phoneNumber) {
