@@ -21,6 +21,23 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.password = password;
         this.role= role;
+        try (FileWriter writer = new FileWriter("Accounts.CSV",true)) {
+            writer.write("\n"+
+                        this.username + "," +
+                                this.age + "," +
+                                this.id+ "," +
+                                this.email + "," +
+                                this.phoneNumber + "," +
+                                this.password+","+
+                                this.role+ "\n");
+
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     public User(){}
