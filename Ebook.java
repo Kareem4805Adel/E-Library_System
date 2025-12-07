@@ -9,6 +9,8 @@ import java.io.FileReader;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import static java.lang.Math.abs;
+
 public class Ebook {
     private int BookId;
     private String genre;
@@ -19,7 +21,7 @@ public class Ebook {
     private String Author;
     private double price;
     private boolean status;
-    private List<Integer> reviews;
+    private List<Reviews> reviews;
 
     public Ebook(){}
 
@@ -51,6 +53,7 @@ public class Ebook {
             e.printStackTrace();
         }
 
+        addBookToCSV(this);
     }
     //-------------------------END OF DANGER--------------------------------------
 
@@ -119,11 +122,11 @@ public class Ebook {
         this.status = status;
     }
 
-    public List<Integer> getReviews() {
+    public List<Reviews> getReviews() {
         return reviews;
     }
 
-    public void setReviews(List<Integer> reviews) {
+    public void setReviews(List<Reviews> reviews) {
         this.reviews = reviews;
     }
 
@@ -298,7 +301,7 @@ public class Ebook {
     return null;
 }
 
-    public void LogVersionHistory(String Newgenre,String Newdescription){
+    public void LogVersionHistory(String NewGenre,String NewDescription){
 
         LocalDate today = LocalDate.now();
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -307,9 +310,9 @@ public class Ebook {
                 +(today.format(dateFormatter))
                 +("] Action: Update")
                 +(" | New Genre: ")
-                +(Newgenre)
+                +(NewGenre)
                 +(" | New Description: ")
-                +(Newdescription + "\n");
+                +(NewDescription + "\n");
 
         String filename = "Book" + this.BookId;
         try (FileWriter writer = new FileWriter(filename)) {
@@ -321,6 +324,81 @@ public class Ebook {
 
     }
 
-    public void BorrowBook(int bookId){}
-    public void purchaseBook(int bookId){}
+    public Boolean BorrowBook(Reader Reader, int duration){
+        Boolean done = Reader.updateBalance((this.price * 0.25 ) * duration);
+        if(done){
+            Reader.addToMyBorrowedBooks(this, duration);
+            return true;
+        }
+
+        return false;
+    }
+
+    public int CalculateTimeLeft(int duration, Reader reader){
+        int Cday = LocalDate.now().getDayOfYear();
+        int daysleft = abs(duration - Cday);
+        if (daysleft == 0){
+            reader.endBorrowing(this.getBookId());
+        }
+        return  daysleft;
+    }
+
+    public Boolean purchaseBook(Reader reader){
+        Boolean done = reader.updateBalance(this.price);
+        if(done){
+            reader.addToMyPurchasedBooks(this);
+            return true;
+        }
+
+        return false;
+    }
+
+    public void addBookToCSV(Ebook b){
+        List<Ebook> books = new ArrayList<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader("Book.CSV"))) {
+
+            String line;
+            br.readLine(); // skip header
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",");
+
+                Ebook u = new Ebook();
+                u.setBookId(Integer.parseInt(data[0]));
+                u.setGenre(data[1]);
+                u.setPublisherId(Integer.parseInt(data[2]));
+                u.setDescription(data[3]);
+                u.setTitle(data[4]);
+                u.setAuthor(data[5]);
+                books.add(u);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        books.add(b);
+
+        try (FileWriter writer = new FileWriter("Accounts.CSV")) {
+
+            writer.write("BookId,genre,PublishingDate,PublisherId,description,Title,Author\n");
+
+            for (Ebook u : books) {
+                writer.write(
+                        u.getBookId() + "," +
+                                u.getGenre() + "," +
+                                u.getPublishingDate()+ "," +
+                                u.getPublisherId() + "," +
+                                u.getDescription() + "," +
+                                u.getTitle()+","+
+                                u.getAuthor()+ "\n"
+                );
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 }

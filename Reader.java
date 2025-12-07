@@ -84,17 +84,19 @@ public class Reader extends User{
         }
     }
 
-    public Boolean ExtendBorrowing(int newDuration, double value, int bookId){
+    public Boolean ExtendBorrowing(int extraDuration, double BookPrice, int bookId){
 
         for (int i = 0; i < BorrowedBooks.size(); i++){
 
             if (BorrowedBooks.get(i).getBookId() == bookId){
 
-                Boolean done = updateBalance(value);
-                if(done) {
-                    BorrowedBooksDuration.set(i, newDuration);
+                if (BorrowedBooks.get(i).CalculateTimeLeft(BorrowedBooksDuration.get(i), this) != 0) {
+                    Boolean done = updateBalance(BookPrice * 0.25 * extraDuration);
+                    if (done) {
+                        BorrowedBooksDuration.set(i, (extraDuration + BorrowedBooksDuration.get(i))); // old duration + extra duration = new duration;
+                    }
+                    return true;
                 }
-                return true;
             }
         }
 

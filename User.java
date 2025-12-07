@@ -76,7 +76,6 @@ public class User {
         this.email = email;
     }
 
-
     public String getPassword() {
         return password;
     }
@@ -120,7 +119,6 @@ public class User {
         }
         return null;
     }
-
 
     public static boolean login(String Username,String password){
         try (BufferedReader br = new BufferedReader(new FileReader("Accounts.CSV"))) {
@@ -205,6 +203,5 @@ public class User {
 
 
     };
-
 
 }
