@@ -17,6 +17,7 @@ public class Ebook {
     private String description;
     private String Title;
     private String Author;
+    private double price;
     private boolean status;
     private List<Integer> reviews;
 
@@ -33,6 +34,7 @@ public class Ebook {
         this.description = description;
         Title = title;
         Author = author;
+        this.price = 0.0;
         status = false;
 
         LocalDate today = LocalDate.now();
@@ -107,6 +109,30 @@ public class Ebook {
 
     public void setAuthor(String author) {
         Author = author;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+
+    public List<Integer> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Integer> reviews) {
+        this.reviews = reviews;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 
     public void removeBook(int bookId) {
@@ -236,7 +262,7 @@ public class Ebook {
         }
     }
 
-    public Ebook getBook(int bookId){
+    public static Ebook getBook(int bookId){
 
         try (BufferedReader br = new BufferedReader(new FileReader("Book.CSV"))) {
 
