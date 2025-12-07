@@ -328,6 +328,9 @@ public class Ebook {
         Boolean done = Reader.updateBalance((this.price * 0.25 ) * duration);
         if(done){
             Reader.addToMyBorrowedBooks(this, duration);
+            Publisher p = (Publisher) User.getUser(this.PublisherId);
+            if (p != null)
+                p.addBalance((this.price * 0.25 ) * duration);
             return true;
         }
 
@@ -347,6 +350,9 @@ public class Ebook {
         Boolean done = reader.updateBalance(this.price);
         if(done){
             reader.addToMyPurchasedBooks(this);
+            Publisher p = (Publisher) User.getUser(this.PublisherId);
+            if (p != null)
+                p.addBalance(this.price);
             return true;
         }
 
@@ -401,4 +407,7 @@ public class Ebook {
 
     }
 
+    public void addReview(Reviews review){
+        reviews.add(review);
+    }
 }

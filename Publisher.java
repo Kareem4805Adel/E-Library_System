@@ -1,7 +1,7 @@
 import java.util.List;
 
 public class Publisher extends User{
-    private int balance;
+    private double balance;
     private List<Ebook> publishedBooks;
 
     public Publisher(String username, int age, int id, String email, String phoneNumber, String password, int balance, List<Ebook> publishedBooks) {
@@ -14,11 +14,11 @@ public class Publisher extends User{
 
     }
 
-    public int getBalance() {
+    public double getBalance() {
         return balance;
     }
 
-    public void setBalance(int balance) {
+    public void setBalance(double balance) {
         this.balance = balance;
     }
 
@@ -35,16 +35,21 @@ public class Publisher extends User{
         b.setPrice(price);
     }
 
-    public void publishBookrequest(){
-        //requests entity
+    public Boolean publishBookRequest(Ebook ebook){
+        try {
+            PublishingRequests p = new PublishingRequests(this.getId(), ebook.getBookId(), false);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
     }
 
-    public Boolean getPublicationStatus(){
-        //request entity
-        return false;
+    public Boolean getPublicationStatus(int reqId){
+        PublishingRequests p = PublishingRequests.getReq(reqId);
+        return p.isRequestStatus();
     }
 
-    public void addBalance(int value){
+    public void addBalance(double value){
         this.balance += value;
     }
 

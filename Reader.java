@@ -103,4 +103,14 @@ public class Reader extends User{
         return false;
     }
 
+    public Boolean ReviewBook(int bookid, int rev, String comment){
+        Ebook ebook = Ebook.getBook(bookid);
+        if ((BorrowedBooks.contains(ebook) || PurchasedBooks.contains(ebook)) && ebook != null){
+            Reviews r = new Reviews(this.getId(), comment, rev);
+            ebook.addReview(r);
+            return true;
+        }
+        return false;
+    }
+
 }
